@@ -30,5 +30,6 @@ override.tf.json
 
 backend.tf
 env_backend.sh
+terraform.tfvars
 *.tfvars
 *.lock.hcl
