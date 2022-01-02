@@ -1,0 +1,24 @@
+version: 0.2
+
+env:
+  variables:
+    TF_VERSION: "1.1.2"
+
+phases:
+
+  install:
+    commands:
+      - cd /usr/bin
+      - "curl -s -qL -o terraform.zip https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip"
+      - unzip -o terraform.zip
+
+  build:
+    commands:
+      - cd "$CODEBUILD_SRC_DIR"
+      - echo "\nterraform {\nbackend \"s3\" {\n    bucket         = \"\${TF_VAR_backend_bucket}\"\n    acl            = \"\${TF_VAR_backend_acl}\"\n    region         = \"\${TF_VAR_backend_region}\"\n    encrypt        = \"\${TF_VAR_backend_encrypt}\"\n    dynamodb_table = \"\${TF_VAR_backend_dynamodb_table}\"\n    key            = \"\${TF_VAR_backend_key}\"\n  }\n}\n" > backend.tf
+      - terraform init -backend=true -backend-config="bucket=${TF_VAR_backend_bucket}" -backend-config="acl=${TF_VAR_backend_acl}" -backend-config="region=${TF_VAR_backend_region}" -backend-config="encrypt=${TF_VAR_backend_encrypt}" -backend-config="dynamodb_table=${TF_VAR_backend_dynamodb_table}" -backend-config="key=${TF_VAR_backend_key}" -force-copy
+      - terraform destroy -auto-approve -input=false 
+
+  post_build:
+    commands:
+      - echo "terraform destroy completed on `date`"
