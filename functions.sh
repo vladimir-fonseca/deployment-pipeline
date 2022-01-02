@@ -78,15 +78,6 @@ function tf_apply {
             -var-file=${TF_VAR_landingzone_var_file}
             
     fi
-
-    # git operations
-    # git add .
-    # git commit -a -m "${TF_VAR_level} ${TF_VAR_landingzone} Deployed" || COMMIT_STATE=$?
-    # if [[ $COMMIT_STATE -eq 0 ]]
-    # then
-    #     git push origin
-    #     git pull
-    # fi
     
 }
 
@@ -113,16 +104,13 @@ function apply_level {
         tf_init_s3
         echo "create workspace"
         create_workspace
-        # export TF_WORKSPACE=${TF_VAR_workspace}
         tf_init_s3
     else
         select_workspace
-        # export TF_WORKSPACE=${TF_VAR_workspace}
         tf_init_s3
     fi
 
-    tf_apply
-    # unset TF_WORKSPACE   
+    tf_apply  
 
 }
 
